@@ -7,6 +7,8 @@ import com.example.android.Jokes;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String JOKE_KEY = "joke";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JokeLibrary</string>
+    <string name="toastButton">Display toast Message from Java Library</string>
+</resources>
