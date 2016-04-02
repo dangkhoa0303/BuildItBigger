@@ -14,11 +14,11 @@
         android:id="@+id/jokeText"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_gravity="center"
+        android:layout_weight="1"
         android:text="@string/app_joke"
         android:textColor="#000000"
-        android:textSize="21sp" />
+        android:textSize="23sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,8 +31,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/tell_joke"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:text="@string/tell_joke" />
+
+        <Button
+            android:id="@+id/kickOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="@string/kickOff" />
 
         <Button
             android:id="@+id/launchButton"

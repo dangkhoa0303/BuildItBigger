@@ -2,5 +2,6 @@
     <string name="app_name">BuildItBigger</string>
     <string name="tell_joke">Tell Joke from Java Library</string>
     <string name="launch_android_lib">Launch Android Library Activity</string>
-    <string name="app_joke">This joke can be passed to Android Library Activity</string>
+    <string name="app_joke">This JOKE is the App Joke</string>
+    <string name="kickOff">Retrieve joke from GCE</string>
 </resources>

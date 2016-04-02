@@ -21,19 +21,38 @@ import butterknife.InjectView;
  */
 public class JokeFragment extends Fragment {
 
+    private static String JOKE_APP = "jokeFromApp";
+    private static String JOKE_GCE = "jokeFromGCE";
+    private static String JOKE_PACKAGE = "jokePackage";
+
+    private String jokeApp;
+    private String jokeGCE;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Intent i = getActivity().getIntent();
+        Bundle bundle = new Bundle();
+        bundle = i.getBundleExtra(JOKE_PACKAGE);
+
+        jokeApp = bundle.getString(JOKE_APP);
+
+        jokeGCE = bundle.getString(JOKE_GCE);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.joke_fragment, container, false);
 
-        Intent i = getActivity().getIntent();
+        TextView jokeAppText = (TextView) view.findViewById(R.id.jokeDisplay);
+        jokeAppText.setText(jokeApp);
 
-        String jokeTxt = i.getStringExtra("joke");
-
-        final TextView jokeText = (TextView) view.findViewById(R.id.jokeDisplay);
-
-        jokeText.setText(jokeTxt);
+        TextView jokeGCEText = (TextView) view.findViewById(R.id.jokeGCEDisplay);
+        jokeGCEText.setText(jokeGCE);
 
         Button toastBtn = (Button) view.findViewById(R.id.toastButton);
 

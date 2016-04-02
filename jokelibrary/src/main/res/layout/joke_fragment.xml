@@ -7,12 +7,22 @@
 
     <TextView
         android:id="@+id/jokeDisplay"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:textSize="21sp" />
+        android:textSize="23sp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/jokeGCEDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:textSize="23sp"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/toastButton"
