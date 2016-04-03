@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.example.android.Jokes;
 import com.example.android.jokelibrary.JokeActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.concurrent.ExecutionException;
 
@@ -26,7 +28,7 @@ import butterknife.InjectView;
  * Created by Dell on 4/1/2016.
  */
 
-public class FragmentMain extends Fragment {
+public class MainFragment extends Fragment {
 
     private String resultFromGCE = null;
     private String SAVE_RESULT = "JOKE_FROM_GCE";
@@ -44,6 +46,9 @@ public class FragmentMain extends Fragment {
 
         @InjectView(R.id.kickOff)
         Button kickOffButton;
+
+        @InjectView(R.id.adView)
+        AdView mAdView;
 
         public ViewHolder(View view) {
             ButterKnife.inject(this, view);
@@ -104,6 +109,9 @@ public class FragmentMain extends Fragment {
                 }
             }
         });
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        viewHolder.mAdView.loadAd(adRequest);
 
         return view;
     }

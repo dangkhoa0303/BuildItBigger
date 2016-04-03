@@ -5,4 +5,5 @@
     <string name="launch_android_lib">Launch Android Library Activity</string>
     <string name="app_joke">This JOKE is the App Joke</string>
     <string name="kickOff">Retrieve joke from GCE</string>
+    <string name="banner_ad_unit_id">ca-app-pub-6978009773705136/9317618808</string>
 </resources>
