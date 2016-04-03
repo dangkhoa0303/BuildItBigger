@@ -1,6 +1,7 @@
 package com.example.android.builditbigger;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,8 +17,10 @@ import android.widget.Toast;
 
 import com.example.android.Jokes;
 import com.example.android.jokelibrary.JokeActivity;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.concurrent.ExecutionException;
 
@@ -33,6 +36,7 @@ public class MainFragment extends Fragment {
     private String resultFromGCE = null;
     private String SAVE_RESULT = "JOKE_FROM_GCE";
     private SharedPreferences sharedPreferences;
+    private InterstitialAd mInterstitialAd;
 
     static class ViewHolder {
         @InjectView(R.id.tellJokeButton)
@@ -55,6 +59,12 @@ public class MainFragment extends Fragment {
         }
     }
 
+    // load new Ad
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +72,30 @@ public class MainFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(null, Context.MODE_PRIVATE);
         resultFromGCE = sharedPreferences.getString(SAVE_RESULT, null);
 
+        mInterstitialAd = new InterstitialAd(getActivity());
+
+        // set unit id for this ad
+        mInterstitialAd.setAdUnitId("ca-app-pub-6978009773705136/1321517206");
+
+        // detect when the Ad is closed
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                requestNewInterstitial();
+                tellJoke();
+            }
+        });
+
+        requestNewInterstitial();
+
+    }
+
+    private void tellJoke() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(new Jokes().getJoke());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Nullable
@@ -75,8 +109,12 @@ public class MainFragment extends Fragment {
         viewHolder.tellJokeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Jokes jokes = new Jokes();
-                Toast.makeText(getContext(), jokes.getJoke(), Toast.LENGTH_SHORT).show();
+
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    tellJoke();
+                }
             }
         });
 
