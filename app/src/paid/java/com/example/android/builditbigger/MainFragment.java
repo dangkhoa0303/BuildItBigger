@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,8 @@ public class MainFragment extends Fragment {
     private String resultFromGCE = null;
     private String SAVE_RESULT = "JOKE_FROM_GCE";
     private SharedPreferences sharedPreferences;
+
+    public static ProgressBar indicator;
 
     static class ViewHolder {
         @InjectView(R.id.tellJokeButton)
@@ -64,8 +67,10 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-
         final ViewHolder viewHolder = new ViewHolder(view);
+
+        indicator = (ProgressBar) view.findViewById(R.id.progressBar);
+        indicator.setVisibility(View.INVISIBLE);
 
         viewHolder.tellJokeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +100,7 @@ public class MainFragment extends Fragment {
         viewHolder.kickOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                indicator.setVisibility(View.VISIBLE);
                 try {
                     resultFromGCE = new EndpointsAsyncTask(getActivity()).execute().get();
                 } catch (InterruptedException e) {

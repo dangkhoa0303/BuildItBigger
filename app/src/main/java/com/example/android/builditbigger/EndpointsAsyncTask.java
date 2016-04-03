@@ -3,6 +3,8 @@ package com.example.android.builditbigger;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.android.backend.myApi.MyApi;
@@ -53,6 +55,7 @@ public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String result) {
         Toast.makeText(context, "Retrieved from GCE: " + result , Toast.LENGTH_SHORT).show();
         Log.i("Result", result);
+        MainFragment.indicator.setVisibility(View.INVISIBLE);
     }
 
 }

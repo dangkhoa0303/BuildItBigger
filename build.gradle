@@ -21,3 +21,14 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+project (':backend') {
+    task startup {
+        dependsOn "appengineRun"
+        dependsOn "test"
+        dependsOn "appengineStop"
+        doLast {
+            println "executing..."
+        }
+    }
+}
