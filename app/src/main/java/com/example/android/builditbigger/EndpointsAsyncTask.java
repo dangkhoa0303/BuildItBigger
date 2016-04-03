@@ -2,7 +2,6 @@ package com.example.android.builditbigger;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,12 +16,16 @@ import java.io.IOException;
 /**
  * Created by Dell on 4/2/2016.
  */
-public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
     private Context context;
 
+    public EndpointsAsyncTask(Context context) {
+        this.context = context;
+    }
+
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(Void... params) {
         if (myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -38,8 +41,6 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
-
         try {
             return myApiService.pullJoke().execute().getData();
         } catch (IOException e) {
@@ -50,7 +51,7 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, "Finished retrieving JOKE", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Retrieved from GCE: " + result , Toast.LENGTH_SHORT).show();
         Log.i("Result", result);
     }
 

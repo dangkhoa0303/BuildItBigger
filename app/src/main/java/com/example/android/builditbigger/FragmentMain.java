@@ -1,7 +1,9 @@
 package com.example.android.builditbigger;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 /**
  * Created by Dell on 4/1/2016.
@@ -28,6 +29,8 @@ import butterknife.OnClick;
 public class FragmentMain extends Fragment {
 
     private String resultFromGCE = null;
+    private String SAVE_RESULT = "JOKE_FROM_GCE";
+    private SharedPreferences sharedPreferences;
 
     static class ViewHolder {
         @InjectView(R.id.tellJokeButton)
@@ -47,9 +50,18 @@ public class FragmentMain extends Fragment {
         }
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sharedPreferences = getActivity().getSharedPreferences(null, Context.MODE_PRIVATE);
+        resultFromGCE = sharedPreferences.getString(SAVE_RESULT, null);
+
+    }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -59,7 +71,6 @@ public class FragmentMain extends Fragment {
             @Override
             public void onClick(View v) {
                 Jokes jokes = new Jokes();
-
                 Toast.makeText(getContext(), jokes.getJoke(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -74,8 +85,7 @@ public class FragmentMain extends Fragment {
                     bundle.putString(MainActivity.JOKE_GCE, resultFromGCE);
                     i.putExtra(MainActivity.JOKE_PACKAGE, bundle);
                     startActivity(i);
-                }
-                else {
+                } else {
                     String inform = "No joke from GCE !!! Please press the -RETRIEVE JOKE FROM GCE- BUTTON first";
                     Toast.makeText(getContext(), inform, Toast.LENGTH_LONG).show();
                 }
@@ -86,7 +96,7 @@ public class FragmentMain extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    resultFromGCE = new EndpointsAsyncTask().execute(getActivity()).get();
+                    resultFromGCE = new EndpointsAsyncTask(getActivity()).execute().get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -98,4 +108,15 @@ public class FragmentMain extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // save resultFromGCE on rotation
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (resultFromGCE != null) {
+            editor.putString(SAVE_RESULT, resultFromGCE);
+            editor.commit();
+        }
+    }
 }

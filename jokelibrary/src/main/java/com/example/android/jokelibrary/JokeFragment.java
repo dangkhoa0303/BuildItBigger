@@ -61,7 +61,6 @@ public class JokeFragment extends Fragment {
             public void onClick(View v) {
 
                 Jokes jokes = new Jokes();
-
                 Toast.makeText(getContext(), jokes.getJoke(), Toast.LENGTH_SHORT).show();
             }
         });
