@@ -1,6 +1,5 @@
 package com.example.android.builditbigger;
 
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +38,9 @@ public class MainFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private InterstitialAd mInterstitialAd;
 
-    static class ViewHolder {
+    public static ProgressBar indicator;
+
+    public static class ViewHolder {
         @InjectView(R.id.tellJokeButton)
         Button tellJokeBtn;
 
@@ -73,7 +75,6 @@ public class MainFragment extends Fragment {
         resultFromGCE = sharedPreferences.getString(SAVE_RESULT, null);
 
         mInterstitialAd = new InterstitialAd(getActivity());
-
         // set unit id for this ad
         mInterstitialAd.setAdUnitId("ca-app-pub-6978009773705136/1321517206");
 
@@ -86,9 +87,7 @@ public class MainFragment extends Fragment {
                 tellJoke();
             }
         });
-
         requestNewInterstitial();
-
     }
 
     private void tellJoke() {
@@ -98,13 +97,24 @@ public class MainFragment extends Fragment {
         alertDialog.show();
     }
 
+    private void launchAndroidLib(String jokeApp) {
+        Intent i = new Intent(getActivity(), JokeActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(MainActivity.JOKE_APP, jokeApp);
+        bundle.putString(MainActivity.JOKE_GCE, resultFromGCE);
+        i.putExtra(MainActivity.JOKE_PACKAGE, bundle);
+        startActivity(i);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_main, container, false);
         final ViewHolder viewHolder = new ViewHolder(view);
+
+        indicator = (ProgressBar) view.findViewById(R.id.progressBar);
+        indicator.setVisibility(View.INVISIBLE);
 
         viewHolder.tellJokeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,12 +132,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (resultFromGCE != null) {
-                    Intent i = new Intent(getActivity(), JokeActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(MainActivity.JOKE_APP, viewHolder.jokeTextView.getText().toString());
-                    bundle.putString(MainActivity.JOKE_GCE, resultFromGCE);
-                    i.putExtra(MainActivity.JOKE_PACKAGE, bundle);
-                    startActivity(i);
+                    String jokeApp = viewHolder.jokeTextView.getText().toString();
+                    launchAndroidLib(jokeApp);
                 } else {
                     String inform = "No joke from GCE !!! Please press the -RETRIEVE JOKE FROM GCE- BUTTON first";
                     Toast.makeText(getContext(), inform, Toast.LENGTH_LONG).show();
@@ -139,7 +145,13 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    resultFromGCE = new EndpointsAsyncTask(getActivity()).execute().get();
+                    EndpointsAsyncTask task = new EndpointsAsyncTask(getActivity());
+                    indicator.setVisibility(View.VISIBLE);
+                    resultFromGCE = task.execute().get();
+
+                    String jokeApp = viewHolder.jokeTextView.getText().toString();
+                    launchAndroidLib(jokeApp);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -148,6 +160,7 @@ public class MainFragment extends Fragment {
             }
         });
 
+        // request and load Ad into ad banner
         AdRequest adRequest = new AdRequest.Builder().build();
         viewHolder.mAdView.loadAd(adRequest);
 
@@ -158,7 +171,7 @@ public class MainFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        // save resultFromGCE on rotation
+        // save resultFromGCE
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (resultFromGCE != null) {
             editor.putString(SAVE_RESULT, resultFromGCE);
